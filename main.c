@@ -3,22 +3,25 @@
 
 // option menu
 void showMenu() {
+   printf("\n----------------------------------------");
    printf("\nEscolha uma das opções abaixo:\n");
    printf("1. Selecionar o caminho da imagem\n");
    printf("2. Aplicar filtro sobre imagem\n");
    printf("0. Fechar o programa\n");
 }
 
+void showFilterMenu() {
+   printf("\n1. Negativo\n");
+   printf("2. Espelhamento\n");
+   printf("3. Borramento\n");
+   printf("4. Brightening\n");
+   printf("0. Cancelar\n");
+}
+
 // option choosing logic
 void getUserOption(int *op) {
-
    printf("OP: ");
    scanf("%d", op);
-   
-   while(*op < 0 || *op > 3) {
-      printf("Opção inválida. OP: ");
-      scanf("%d", op);
-   }
 }
 
 // image choosing logic
@@ -50,6 +53,41 @@ void getImagePath(char *fpath) {
    // strcat("pgm/", fpath);
 }
 
+// filter choosing logic
+void applyFilter(char *fpath) {
+
+   // TO DO: SAVE THE RESULT IN A NEW VARIABLE
+
+   int filtro;
+
+   // choose option
+   showFilterMenu();
+   getUserOption(&filtro);
+
+   // apply the filter
+   switch (filtro)
+   {
+   case 1:
+      printf("Negativo\n");
+      // negative(*fpath);
+      break;
+   case 2:
+      printf("Espelhamento\n");
+      // mirroring(*fpath);
+      break;
+   case 3:
+      printf("Borramento\n");
+      // blurring(*fpath);
+      break;
+   case 4:
+      printf("Brightening\n");
+      // brightening(*fpath);
+      break;
+   default:
+      break;
+   }
+}
+
 int main() {
 
    // variable declaration
@@ -71,7 +109,8 @@ int main() {
             // printf("%s\n", fpath);
             break;
          case 2:
-            printf("OP 2\n");
+            applyFilter(&fpath);
+            // printf("OP 2\n");
          default:
             break;
       }
