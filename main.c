@@ -56,8 +56,9 @@ void getImagePath(char* fpath) {
 
 // filter choosing logic
 void applyFilter(char *fpath) {
-
+   
    int filtro;
+
 
    // read the original image
    struct pgm_image original_image = getImageContent(fpath);
@@ -73,6 +74,8 @@ void applyFilter(char *fpath) {
 
    */
 
+   printf("%d\n", original_image.height);
+   
    // choose filter
    showFilterMenu();
    getUserOption(&filtro);
