@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include "pgm.h"
 #include "images.c"
 
 // option menu
@@ -26,7 +28,7 @@ void getUserOption(int *op) {
 }
 
 // image choosing logic
-void getImagePath(char *fpath) {
+void getImagePath(char* fpath) {
 
    // in case the user has alredy chosen an image
    if(strlen(fpath) != 0) {
@@ -53,27 +55,30 @@ void getImagePath(char *fpath) {
 }
 
 // filter choosing logic
-void applyFilter(char *fpath, FILE *img_result) {
-
-   // TO DO: SAVE THE RESULT IN A NEW VARIABLE
+void applyFilter(char *fpath) {
 
    int filtro;
-   FILE *img;
-   int** imgmx;
 
-   imgmx = readImageFile(fpath, img);
+   // read the original image
+   struct pgm_image original_image = getImageContent(fpath);
 
+   /*
+   // apenas imprimindo a matriz
    for(int i=0; i < 20; i++) {
       for(int j=0; j < 20; j++) {
-            printf("%d ", imgmx[i][j]);
+            printf("%d ", original_image.imgmx[i][j]);
       }
       printf("\n");
    }
 
-   // choose option
+   */
+
+   // choose filter
    showFilterMenu();
    getUserOption(&filtro);
 
+   // c) o programa aplica o filtro escolhido armazenando numa imagem resultado
+   // TO DO: SAVE THE RESULT IN A NEW VARIABLE
    // apply the filter
    switch (filtro)
    {
@@ -96,6 +101,10 @@ void applyFilter(char *fpath, FILE *img_result) {
    default:
       break;
    }
+
+   // freeing memory
+   for (int i=0; i<original_image.height; i++) free(original_image.imgmx[i]);
+      free(original_image.imgmx);
 }
 
 
@@ -104,7 +113,7 @@ int main() {
    // variable declaration
    int op;
    char fpath[35];
-   FILE *img_result;
+   FILE *pgm_result;
    
    // setting things up
    printf("Bem vindo ao MyPhotoshop!\n\n");
@@ -117,14 +126,13 @@ int main() {
       switch (op)
       {
          case 1:
-            getImagePath(&fpath);
-            // printf("%s\n", fpath);
+            getImagePath(fpath);
             break;
          case 2:
             if(strlen(fpath) == 0 )
                printf("Opção inválida. Selecione uma imagem.");
             else
-               applyFilter(&fpath, &img_result);   
+               applyFilter(fpath);
          default:
             break;
       }

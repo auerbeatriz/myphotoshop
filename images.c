@@ -1,38 +1,36 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "pgm.h"
 
-
-int** readImageFile(char *fpath, FILE *img) {
+struct pgm_image getImageContent(char *fpath) {
     char ftype[3];
-    // width: n colunas
-    // height: n linhas
-    int width, height, gray_max;
-    // final image matrix
-    int** imgmx;
+    FILE *fpgm;
+    struct pgm_image image;
 
-    img = fopen(fpath, "r");
+    fpgm = fopen(fpath, "r");
 
     // verifying if its a pgm file
-    fgets(ftype, 3, img);
+    fgets(ftype, 3, fpgm);
     if(strcmp(ftype, "P2") == 0) {
 
         // if so, then catch the size of the image and the max gray level
-        fscanf(img, "%d %d\n %d\n", &width, &height, &gray_max);
+        fscanf(fpgm, "%d %d\n %d\n", &image.width, &image.height, &image.max_gray_level);
 
         // dinaamically allocating the matrix => source code: CELES, Waldemar (Introducao a Estrutura de Dados com Tecnicas de Programacao em C - pg 109)
-        imgmx = malloc(height * sizeof (int*));
-        for (int i=0; i < height; i++) {
-            imgmx[i] = malloc(width * sizeof (int));
+        image.imgmx = malloc(image.height * sizeof (int*));
+        for (int i=0; i < image.height; i++) {
+            image.imgmx[i] = malloc(image.width * sizeof (int));
         }
 
         // actually reading the pixels, now that all the space we need are allocated in the memmory
-        for(int i=0; i < height; i++) {
-            for(int j=0; j < width; j++) {
-                fscanf(img, "%d", &imgmx[i][j]);
+        for(int i=0; i < image.height; i++) {
+            for(int j=0; j < image.width; j++) {
+                fscanf(fpgm, "%d", &image.imgmx[i][j]);
             }
         }
 
     }
 
-    fclose(img);
-    return imgmx;
+    fclose(fpgm);
+    return image;
 }
