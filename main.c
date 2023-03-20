@@ -58,12 +58,11 @@ void getImagePath(char* fpath) {
 void applyFilter(char *fpath) {
    
    int filtro;
-
+   struct pgm_image original_image;
 
    // read the original image
-   struct pgm_image original_image = getImageContent(fpath);
+   getImageContent(fpath, &original_image);
 
-   /*
    // apenas imprimindo a matriz
    for(int i=0; i < 20; i++) {
       for(int j=0; j < 20; j++) {
@@ -72,10 +71,6 @@ void applyFilter(char *fpath) {
       printf("\n");
    }
 
-   */
-
-   printf("%d\n", original_image.height);
-   
    // choose filter
    showFilterMenu();
    getUserOption(&filtro);
@@ -104,7 +99,7 @@ void applyFilter(char *fpath) {
    default:
       break;
    }
-
+   
    // freeing memory
    for (int i=0; i<original_image.height; i++) free(original_image.imgmx[i]);
       free(original_image.imgmx);
