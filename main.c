@@ -58,51 +58,59 @@ void getImagePath(char* fpath) {
 void applyFilter(char *fpath) {
    
    int filtro;
-   struct pgm_image original_image;
+   struct pgm_image* original_image = NULL;
 
    // read the original image
    getImageContent(fpath, &original_image);
 
-   // apenas imprimindo a matriz
-   for(int i=0; i < 20; i++) {
-      for(int j=0; j < 20; j++) {
-            printf("%d ", original_image.imgmx[i][j]);
+   // verifying if it really has something to apply a filter
+   if(original_image != NULL) {
+
+      // apenas imprimindo a matriz
+      for(int i=0; i < 20; i++) {
+         for(int j=0; j < 20; j++) {
+               printf("%d ", original_image->imgmx[i][j]);
+         }
+         printf("\n");
       }
-      printf("\n");
+
+      // choose filter
+      showFilterMenu();
+      getUserOption(&filtro);
+
+      // c) o programa aplica o filtro escolhido armazenando numa imagem resultado
+      // TO DO: SAVE THE RESULT IN A NEW VARIABLE
+      // apply the filter
+      switch (filtro)
+      {
+      case 1:
+         printf("Negativo\n");
+         // negative(*fpath);
+         break;
+      case 2:
+         printf("Espelhamento\n");
+         // flipping(*fpath);
+         break;
+      case 3:
+         printf("Borramento\n");
+         // blurring(*fpath);
+         break;
+      case 4:
+         printf("Brightening\n");
+         // brightening(*fpath);
+         break;
+      default:
+         break;
+      }
+
+      // freeing memory
+      for (int i=0; i<original_image->height; i++) free(original_image->imgmx[i]);
+         free(original_image->imgmx);
+      free(original_image);
+
    }
 
-   // choose filter
-   showFilterMenu();
-   getUserOption(&filtro);
-
-   // c) o programa aplica o filtro escolhido armazenando numa imagem resultado
-   // TO DO: SAVE THE RESULT IN A NEW VARIABLE
-   // apply the filter
-   switch (filtro)
-   {
-   case 1:
-      printf("Negativo\n");
-      // negative(*fpath);
-      break;
-   case 2:
-      printf("Espelhamento\n");
-      // flipping(*fpath);
-      break;
-   case 3:
-      printf("Borramento\n");
-      // blurring(*fpath);
-      break;
-   case 4:
-      printf("Brightening\n");
-      // brightening(*fpath);
-      break;
-   default:
-      break;
-   }
    
-   // freeing memory
-   for (int i=0; i<original_image.height; i++) free(original_image.imgmx[i]);
-      free(original_image.imgmx);
 }
 
 
