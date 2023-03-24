@@ -1,0 +1,4 @@
+TO DOS:
+
+* gravar imagem final
+* limpar espaço de memória para imagens

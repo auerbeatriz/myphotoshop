@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "stdio.h": "c",
+        "pgm.h": "c",
+        "stdlib.h": "c",
+        "images.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
