@@ -37,3 +37,29 @@ void getImageContent(char *fpath, struct pgm_image* image) {
 
     fclose(fpgm);
 }
+void negative(struct pgm_image* image, struct pgm_image* copia){
+    for (int i = 0; i < 20; i++) {
+    for (int j = 0; j < 20; j++) {
+        image->imgmx[i][j] = 255 - copia->imgmx[i][j];
+      }
+      }
+
+      for(int i=0; i < 20; i++) {
+      for(int j=0; j < 20; j++) {
+            printf("%d ", copia->imgmx[i][j]);
+      }
+      printf("\n");
+   }
+}
+
+void flipping(struct pgm_image* image, struct pgm_image* copia){
+     printf("Espelhamento\n");
+      // flipping(*fpath);
+      for (int i = 0; i < 20; i++) {
+        for (int j = 0; j < 10; j++) {
+            int temp = image->imgmx[i][j];
+            copia->imgmx[i][j] = image->imgmx[i][19-j];
+            copia->imgmx[i][19-j] = temp;
+        }
+    }
+}
