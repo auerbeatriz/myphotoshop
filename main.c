@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "images.h"
 #include "images.c"
 
 // option menu
@@ -152,6 +153,7 @@ int main() {
                   }
                   printf("\n");
                }
+
             }
          default:
             break;
