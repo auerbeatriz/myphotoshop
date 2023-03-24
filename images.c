@@ -1,33 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "pgm.h"
 
-void getImageContent(char *fpath, struct pgm_image** image) {
-    char ftype[3];
+#include "images.h"
+
+struct image {
+    // width: n colunas
+    // height: n linhas
+    // imgmx: final image matrix
+    
+    int width;
+    int height;
+    int max_gray_level;
+    int** imgmx;
+};
+
+
+void getImageContent(char *fpath, Image** image) {
     FILE *fpgm;
+    int dimensions[3];
 
-    fpgm = fopen(fpath, "r");
+    char *extension = fpath + strlen(fpath) - 3;
 
-    // verifying if the file could be oppened
-    if(fpgm) {
+    // verifying if its a pgm file
+    if(strcmp(extension, "pgm") == 0) {
+        
+        // if so, then it tries to the file
+        fpgm = fopen(fpath, "r");
 
-        // verifying if its a pgm file
-        fgets(ftype, 3, fpgm);
-        if(strcmp(ftype, "P2") == 0) {
+        if(fpgm) {
 
-            // if so, then original_image will be dynamically allocated
-            *image = (struct pgm_image*) malloc(sizeof( struct pgm_image ));
+            // unsed line == "P2"
+            fgets(extension, 3, fpgm);
+            
+            // catching the size of the image and the max gray level
+            fscanf(fpgm, "%d %d\n %d\n", &dimensions[0], &dimensions[1], &dimensions[2]);
 
-            // then it catches the size of the image and the max gray level
-            fscanf(fpgm, "%d %d\n %d\n", &(*image)->width, &(*image)->height, &(*image)->max_gray_level);
-
-            // dinamically allocating the matrix => source code: CELES, Waldemar (Introducao a Estrutura de Dados com Tecnicas de Programacao em C - pg 109)
-            (*image)->imgmx = malloc((*image)->height * sizeof (int*));
-            for (int i=0; i < (*image)->height; i++) {
-                (*image)->imgmx[i] = malloc((*image)->width * sizeof (int));
-            }
-
-            // actually reading the pixels, now that all the space we need are allocated in the memmory
+            // if the image can be read, then original_image will be dynamically allocated
+            initializeImage(&(*image), dimensions);
+            
+            // actually reading the pixels, now that all the space we need are allocated in the memory
             for(int i=0; i < (*image)->height; i++) {
                 for(int j=0; j < (*image)->width; j++) {
                     fscanf(fpgm, "%d", &(*image)->imgmx[i][j]);
@@ -36,38 +47,49 @@ void getImageContent(char *fpath, struct pgm_image** image) {
 
         }
         else {
-            printf("Tipo de arquivo não suportado.\n");
+            printf("Não foi possível realizar a leitura do arquivo informado.\n");
         }
+
+        fclose(fpgm);
     }
     else {
-        printf("Não foi possível realizar a leitura do arquivo informado.\n");
+        printf("Tipo de arquivo não suportado.\n");
     }
 
-    fclose(fpgm);
 }
-void negative(struct pgm_image* image, struct pgm_image* copia){
+
+void getImageDimensions(Image** original_image, int *dimensions) {
+    dimensions[0] = (*original_image)->width;
+    dimensions[1] = (*original_image)->height;
+    dimensions[2] = (*original_image)->max_gray_level;
+}
+
+void initializeImage(Image** image, int *dimensions) {
+    *image = (Image*) malloc(sizeof( Image ));
+
+    (*image)->width = dimensions[0];
+    (*image)->height = dimensions[1];
+    (*image)->max_gray_level = dimensions[2];
+
+    (*image)->imgmx = malloc((*image)->height * sizeof (int*));
+    for (int i=0; i < (*image)->height; i++) {
+        (*image)->imgmx[i] = malloc((*image)->width * sizeof (int));
+    }
+}
+
+void negative(Image** original, Image** copia) {
     for (int i = 0; i < 20; i++) {
-    for (int j = 0; j < 20; j++) {
-        image->imgmx[i][j] = 255 - copia->imgmx[i][j];
-      }
-      }
-
-      for(int i=0; i < 20; i++) {
-      for(int j=0; j < 20; j++) {
-            printf("%d ", copia->imgmx[i][j]);
-      }
-      printf("\n");
-   }
+        for (int j = 0; j < 20; j++) {
+            (*copia)->imgmx[i][j] = 255 - (*original)->imgmx[i][j];
+        }
+    }
 }
 
-void flipping(struct pgm_image* image, struct pgm_image* copia){
-     printf("Espelhamento\n");
-      // flipping(*fpath);
-      for (int i = 0; i < 20; i++) {
+void flipping(Image** original, Image** copia) {
+    for (int i = 0; i < 20; i++) {
         for (int j = 0; j < 10; j++) {
-            int temp = image->imgmx[i][j];
-            copia->imgmx[i][j] = image->imgmx[i][19-j];
-            copia->imgmx[i][19-j] = temp;
+            (*copia)->imgmx[i][j] = (*original)->imgmx[i][19-j];
+            (*copia)->imgmx[i][19-j] = (*original)->imgmx[i][j];
         }
     }
 }

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "pgm.h"
+
 #include "images.c"
 
 // option menu
@@ -27,7 +27,7 @@ void getUserOption(int *op) {
    scanf("%d", op);
 }
 
-// image choosing logic
+// image choosing logic ** it is in the main file bc of relative path: not applied for other contexts
 void getImagePath(char* fpath) {
 
    // in case the user has alredy chosen an image
@@ -55,58 +55,45 @@ void getImagePath(char* fpath) {
 }
 
 // filter choosing logic
-void applyFilter(char *fpath) {
+void applyFilter(Image** original_image, Image** final_image) {
    
    int filtro;
-   struct pgm_image* original_image = NULL;
-
-   // read the original image
-   getImageContent(fpath, &original_image);
+   int dimensions[3];
 
    // verifying if it really has something to apply a filter
    if(original_image != NULL) {
-
-      // apenas imprimindo a matriz
-      for(int i=0; i < 20; i++) {
-         for(int j=0; j < 20; j++) {
-               printf("%d ", original_image->imgmx[i][j]);
-         }
-         printf("\n");
-      }
 
       // choose filter
       showFilterMenu();
       getUserOption(&filtro);
 
+      // initialize a new image to store the result
+      getImageDimensions(original_image, dimensions);
+      initializeImage(final_image, dimensions);
+
       // c) o programa aplica o filtro escolhido armazenando numa imagem resultado
-      // TO DO: SAVE THE RESULT IN A NEW VARIABLE
       // apply the filter
       switch (filtro)
       {
       case 1:
          printf("Negativo\n");
-         // negative(*fpath);
+         negative(original_image, final_image);
          break;
       case 2:
          printf("Espelhamento\n");
-         // flipping(*fpath);
+         flipping(original_image, final_image);
          break;
       case 3:
          printf("Borramento\n");
-         // blurring(*fpath);
+         // blurring(original_image, final_image);
          break;
       case 4:
          printf("Brightening\n");
-         // brightening(*fpath);
+         // brightening(original_image, final_image);
          break;
       default:
          break;
       }
-
-      // freeing memory
-      for (int i=0; i<original_image->height; i++) free(original_image->imgmx[i]);
-         free(original_image->imgmx);
-      free(original_image);
 
    }
 
@@ -119,13 +106,15 @@ int main() {
    // variable declaration
    int op;
    char fpath[35];
+   Image* original_image = NULL;
+   Image* final_image = NULL;
    FILE *pgm_result;
    
    // setting things up
    printf("Bem vindo ao MyPhotoshop!\n\n");
    showMenu();
    getUserOption(&op);
-   
+      
    while(op != 0) {
 
       // processing what the user wants
@@ -135,10 +124,35 @@ int main() {
             getImagePath(fpath);
             break;
          case 2:
-            if(strlen(fpath) == 0 )
+            if(strlen(fpath) == 0 ) {
                printf("Opção inválida. Selecione uma imagem.");
-            else
-               applyFilter(fpath);
+            }
+            else {
+                if(original_image == NULL) {
+                  // the has not been read yeat | or have a error
+                  getImageContent(fpath, &original_image);
+               }
+               
+               //  EXCLUIR DEPOIS apenas imprimindo a matriz
+               for(int i=0; i < 20; i++) {
+                  for(int j=0; j < 20; j++) {
+                        printf("%d ", original_image->imgmx[i][j]);
+                  }
+                  printf("\n");
+               }
+
+               printf("\n");
+
+               applyFilter(&original_image, &final_image);
+
+               //  EXCLUIR DEPOIS apenas imprimindo a matriz
+               for(int i=0; i < 20; i++) {
+                  for(int j=0; j < 20; j++) {
+                        printf("%d ", final_image->imgmx[i][j]);
+                  }
+                  printf("\n");
+               }
+            }
          default:
             break;
       }
